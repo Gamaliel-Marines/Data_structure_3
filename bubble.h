@@ -38,14 +38,22 @@ void bubbleSort(T *arr, int size) {
 // @param v, a vector of T elements.
 // =================================================================
 template <class T>
-void bubbleSort(std::vector<T> &v) {
-	for(int i = v.size() - 1; i > 0; i--){
-		for(int j = 0; j < i; j++){
-			if(v[j] > v[j + 1]){
+std::vector<int>bubbleSort(std::vector<T> &v)
+{
+	int compare = 0;
+	for(int i = v.size() - 1; i > 0; i--)
+	{
+		for(int j = 0; j < i; j++)
+		{
+			if(v[j] > v[j + 1])
+			{
 				swap(v, j, j + 1);
+				compare++;
 			}
 		}
 	}
+	v.push_back(compare);
+	return v;
 }
 
 #endif /* BUBBLE_H */
