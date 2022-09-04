@@ -36,12 +36,16 @@ void insertionSort(T *arr, int size) {
 // @param A, a vector of T elements.
 // =================================================================
 template <class T>
-void insertionSort(std::vector<T> &v) {
+std::vector <int> insertionSort(std::vector<T> &v) {
+	int compare=0;
 	for(int i = 1; i < v.size(); i++){
 		for(int j = i; j > 0 && v[j] < v[j - 1]; j--){
 			swap(v, j, j - 1);
+			compare++;
 		}
 	}
+	v.push_back(compare);
+	return v;
 }
 
 #endif /* INSERTION_H */
