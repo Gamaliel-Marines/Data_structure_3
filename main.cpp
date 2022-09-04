@@ -1,8 +1,8 @@
 // =================================================================
 //
 // File: main.cpp
-// Author:
-// Date:
+// Author: Gamaliel Marines Olvera A01708746
+// Date:09/02/2022
 //
 // =================================================================
 #include <iostream>
@@ -15,6 +15,8 @@
 
 using namespace std;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[]) 
+{
+
 	return 0;
 }
