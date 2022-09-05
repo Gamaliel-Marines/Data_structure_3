@@ -2,96 +2,77 @@
 //
 // File: main.cpp
 // Author: Gamaliel Marines Olvera A01708746
-// Date:09/02/2022
+// Date: 03/09/2022
 //
 // =================================================================
 #include <iostream>
+#include <fstream>
 #include <vector>
+#include <string>
+#include <algorithm>
 #include "header.h"
 #include "search.h"
 #include "bubble.h"
 #include "selection.h"
 #include "insertion.h"
-#include <fstream>
 
-std::vector <int> retrieve(std::fstream &file, int startLine)
-{
-	//We get the size of the vector and initialize it with it
-	std::string Auxsize;
-	int size;
-	int j = 0;
-	//We iterate to get to the line we're interested in and get the size
-	for (int i = 0;i<startLine;i++)
-	{
-		std::getline(file,Auxsize);
-	}
-	size=stoi(Auxsize);
-	//With the size we set a vector and we get to the line with the elements of it
-	std::vector <int> arr(size);
-	std::string line,currentNumber;
-	//We read each element in the line and add it to the vector 
-	std::getline(file,line);
-	for (int i = 0;i<line.size();i++)
-	{
-		if (line[i] == ' ')
-		{
-			arr.at(j)=(stoi(currentNumber));
-			currentNumber=' ';
-			j++;
-		}
-		
-		else
-		{
-			currentNumber+=line[i];
-		}
-	}
-	return arr;
-}
+using namespace std;
 
-//function to print the vectors
-void printVector(std::vector <int> x)
-{
-	for (int i=0;i<x.size();i++)
-	{
-		std::cout<<x.at(i)<<std::endl;
-	}
-}
-
-//To test diff:
-//diff mysolution1.txt solution1.txt
-//diff mysolution2.txt solution2.txt
-//diff mysolution3.txt solution3.txt
-//diff mysolution4.txt solution4.txt
 int main(int argc, char* argv[]) {
-	//We open the file 
-	std::fstream inFile;
-	std::fstream output1;
-	inFile.open("input1.txt",ios::in);
-	output1.open("mysolution1.txt",fstream::out);
-	//We retrieve arr 1 wich contains the elements to be sorted and arr2 wich contains the elements 
-	// to be found in arr1
-	std::vector <int> arr1=retrieve(inFile,1);
-	std::vector <int> arr2=retrieve(inFile,1);
-	std::vector <int> aux=arr1;
-	//We perform each sorting algorithm and add the comparisons to file
-	output1<<to_string(bubbleSort(arr1).back());
-	arr1 = aux;
-	output1<<' ' + to_string(selectionSort(arr1).back());
-	arr1 = aux;
-	output1<<' '+ to_string(insertionSort(arr1).back())<<endl;
-	arr1.pop_back();
-	output1<<endl;
-	//We perform each searching algorithm using arr2 as a guide and add them to the file
-	for(int i = 0;i<arr2.size();i++){
-		output1<<to_string(sequentialSearch(arr1,arr2.at(i)));
-		sequentialSearchII(arr1,arr2.at(i));
-		output1<<' ' +to_string(arr1.back());
-		arr1.pop_back();
-		binarySearchII(arr1,arr2.at(i));
-		output1<<' '+to_string(arr1.back())<<endl;
-		arr1.pop_back();
+	//variables, vectors and files needed for program to execute
+	int num_of_data, num_of_searches, num_of_comparisons_bubble, num_of_comparisons_selection, num_of_comparisons_insertion;
+	vector<int> data_vec, search_data_vec;
+	string data, searched_data;
+	ifstream input_file(argv[1], ios::in);
+	ofstream output_file(argv[2], ios::out);
+
+	//error management
+	if (argc != 3){
+		cout<<"Error: The number of arguments is bigger than needed."<<argv[0]<<"\nFormat: <exe> <input.txt> <output.txt>";
+		return -1;
+	}else if (input_file.fail()){
+		cout<<"Error: Cant open input file. ";
+		return -1;
+	}else if (output_file.fail()){
+		cout<<"Error: Cant create output file. ";
+		return -1;
 	}
-	inFile.close();
-	output1.close();
-	return 0;
+
+	input_file>>num_of_data;
+
+	//reading the vector of data
+	for (size_t i{}; i < num_of_data; ++i) {
+		getline(input_file, data, ' ');
+		data_vec.push_back(stoi(data));
+	}
+
+	//copies of the vector of data
+	vector<int> data_vec_copy = data_vec;
+	vector<int> data_vec_copy_2 = data_vec;
+
+	//sorting the vector of data
+	num_of_comparisons_bubble = bubbleSort(data_vec);
+	num_of_comparisons_selection = selectionSort(data_vec_copy);
+	num_of_comparisons_insertion = insertionSort(data_vec_copy_2);
+
+	output_file<<num_of_comparisons_bubble<<" "<<num_of_comparisons_selection<<" "<<num_of_comparisons_insertion<<endl<<endl;
+
+	//filtering the vector of data
+	input_file>>num_of_searches;
+
+	pair<int, int> results{};
+
+	for (size_t i{}; i < num_of_searches; ++i){
+		getline(input_file, searched_data, ' ');
+		search_data_vec.push_back(stoi(searched_data));
+
+		results = sequentialSearch(data_vec, search_data_vec[i]);
+		output_file<<results.first<<" "<<results.second<<" ";
+
+		results = binarySearch(data_vec, search_data_vec[i]);
+		output_file<<results.second<<"\n";
+	}
+
+	input_file.close();
+	output_file.close();
 }
